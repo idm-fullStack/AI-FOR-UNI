@@ -1,23 +1,59 @@
-% Возможные действия игроков
-player_action(cooperate).
-player_action(defect).
+% Основной предикат для диагностики ESP32
+diagnose_esp32 :-
+    check_power_supply,
+    check_serial_communication,
+    check_wifi_connection,
+    check_gpio_pins,
+    check_memory.
 
-% Матрица выигрышей (Игрок1, Игрок2, Выигрыш1, Выигрыш2)
-payoff(cooperate, cooperate, 3, 3).
-payoff(cooperate, defect, 0, 5).
-payoff(defect, cooperate, 5, 0).
-payoff(defect, defect, 1, 1).
+% Проверка питания
+check_power_supply :-
+    power_supply_status(Status),
+    (Status == ok ->
+        write('Power supply: OK'), nl;
+        write('Power supply: NOT OK'), nl,
+        write('Что не исправно: Проблема с питанием'), nl).
 
-% Проверка, что действие A1 оптимально при действии A2
-best_response(A1, A2, U1) :-
-    payoff(A1, A2, U1, _),
-    \+ (player_action(OtherA1), 
-        payoff(OtherA1, A2, OtherU1, _), 
-        OtherU1 > U1).
+% Проверка последовательной коммуникации
+check_serial_communication :-
+    serial_communication_status(Status),
+    (Status == ok ->
+        write('Serial communication: OK'), nl;
+        write('Serial communication: NOT OK'), nl,
+        write('Что не исправно: Проблема с последовательной коммуникацией'), nl).
 
-% Поиск равновесия Нэша
-nash_equilibrium(A1, A2) :-
-    player_action(A1),
-    player_action(A2),
-    best_response(A1, A2, _),
-    best_response(A2, A1, _).
+% Проверка Wi-Fi соединения
+check_wifi_connection :-
+    wifi_connection_status(Status),
+    (Status == ok ->
+        write('Wi-Fi connection: OK'), nl;
+        write('Wi-Fi connection: NOT OK'), nl,
+        write('Что не исправно: Проблема с Wi-Fi соединением'), nl).
+
+% Проверка GPIO пинов
+check_gpio_pins :-
+    gpio_pins_status(Status),
+    (Status == ok ->
+        write('GPIO pins: OK'), nl;
+        write('GPIO pins: NOT OK'), nl,
+        write('Что не исправно: Проблема с GPIO пинами'), nl).
+
+% Проверка памяти
+check_memory :-
+    memory_status(Status),
+    (Status == ok ->
+        write('Memory: OK'), nl;
+        write('Memory: NOT OK'), nl,
+        write('Что не исправно: Проблема с памятью'), nl).
+
+% Примеры предикатов для проверки статуса
+power_supply_status(ok).
+serial_communication_status(ok).
+wifi_connection_status(not_ok).
+gpio_pins_status(ok).
+memory_status(ok).  
+
+
+
+
+diagnose_esp32.
